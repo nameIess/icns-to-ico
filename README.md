@@ -33,9 +33,11 @@ icns-to-ico.exe
 
 ## How It Works
 
-1. **Place your .icns files** in the `icons/icns` folder (opens automatically)
-2. **Press Enter** when ready
-3. **View results** in the `icons/ico` folder (opens automatically)
+1. **Directories Created**: The tool automatically creates `icons/icns` and `icons/ico` folders in your Downloads directory
+2. **Input Folder Opens**: The `Downloads/icons/icns` folder opens for you to add .icns files
+3. **Press Enter** when ready
+4. **Conversion Runs**: All .icns files are converted to .ico format
+5. **Output Folder Opens**: The `Downloads/icons/ico` folder opens to show your converted files
 
 ## Getting ICNS Icons
 
@@ -89,4 +91,3 @@ icns-to-ico/
 ## License
 
 [This project is open source. Feel free to use and modify.](LICENSE)
-
