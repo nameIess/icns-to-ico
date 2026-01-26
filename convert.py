@@ -4,8 +4,10 @@ import subprocess
 from PIL import Image
 
 def create_directories():
-    icns_dir = "icons/icns"
-    ico_dir = "icons/ico"
+    """Create the icons/icns and icons/ico directories in the user's Downloads folder."""
+    downloads_path = os.path.join(os.path.expanduser('~/Downloads'), 'icons')
+    icns_dir = os.path.join(downloads_path, 'icns')
+    ico_dir = os.path.join(downloads_path, 'ico')
     os.makedirs(icns_dir, exist_ok=True)
     os.makedirs(ico_dir, exist_ok=True)
     return icns_dir, ico_dir
