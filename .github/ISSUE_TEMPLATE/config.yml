@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Support
+    url: https://example.com/community
+    about: Please ask questions and get help from the community here.
+  - name: Documentation
+    url: https://example.com/docs
+    about: Read our documentation to find answers to common questions.

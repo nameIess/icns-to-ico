@@ -1,0 +1,66 @@
+name: User Support 🆘
+description: Ask a question or request help.
+assignees:
+labels: ["Help wanted", "Question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Need some help? ❓
+        Before opening a support request, please ensure you have checked the documentation.
+  - type: checkboxes
+    id: docs_check
+    attributes:
+      label: 📘 Documentation Checked
+      description: "Which of these have you already checked?"
+      options:
+        - label: "README"
+        - label: "Help / CLI `--help`"
+        - label: "Existing issues"
+    validations:
+      required: true
+
+  - type: textarea
+    id: support_need
+    attributes:
+      label: 🧩 What do you need help with?
+      description: "Clearly describe what you are trying to do."
+      placeholder: |
+        e.g.,
+        I am trying to [describe task] but...
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried_already
+    attributes:
+      label: 🛠️ What have you tried?
+      description: "List the commands or configurations you have already attempted."
+      placeholder: |
+        e.g.,
+        - Ran '[command]'
+        - Updated [software] to latest version
+        - Checked [settings]
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 💻 Environment Details
+      description: "Please specify your setup."
+      placeholder: |
+        - OS: [e.g. Windows / Linux / macOS]
+        - Language/Runtime version: 
+        - Project version/commit: 
+        - Mode: [if applicable]
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🧾 Additional Context
+      description: "Screenshots, related links, or extra details."
+    validations:
+      required: false
