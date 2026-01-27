@@ -37,7 +37,17 @@ def convert_icns_to_ico(input_dir, output_dir):
 def build_exe():
     try:
         print("Building executable...")
-        subprocess.run([sys.executable, "-m", "PyInstaller", "--onefile", "--clean", __file__], check=True)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, 'icon.ico')
+        args = [sys.executable, "-m", "PyInstaller", "--onefile", "--clean"]
+        if os.path.exists(icon_path):
+            args.append(f"--icon={icon_path}")
+            print(f"Using icon: {icon_path}")
+        else:
+            print("icon.ico not found in script directory; building without icon.")
+        args.append(__file__)
+        subprocess.run(args, check=True)
+
         exe_name = os.path.splitext(os.path.basename(__file__))[0] + ".exe"
         exe_path = os.path.join("dist", exe_name)
         if os.path.exists(exe_path):
