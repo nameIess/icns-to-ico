@@ -5,7 +5,7 @@ from PIL import Image
 
 def create_directories():
     """Create the icons/icns and icons/ico directories in the user's Downloads folder."""
-    downloads_path = os.path.join(os.path.expanduser('~/Downloads'), 'icons')
+    downloads_path = os.path.join(os.path.expanduser('~/Downloads'), 'temp', 'icons')
     icns_dir = os.path.join(downloads_path, 'icns')
     ico_dir = os.path.join(downloads_path, 'ico')
     os.makedirs(icns_dir, exist_ok=True)
@@ -15,9 +15,9 @@ def create_directories():
 def convert_icns_to_ico(input_dir, output_dir):
     if not os.path.exists(input_dir):
         print(f"Input directory {input_dir} does not exist.")
-        return 0
+        return []
 
-    converted = 0
+    converted = []
     for filename in os.listdir(input_dir):
         if filename.lower().endswith('.icns'):
             input_path = os.path.join(input_dir, filename)
@@ -28,7 +28,7 @@ def convert_icns_to_ico(input_dir, output_dir):
                 with Image.open(input_path) as im:
                     im.save(output_path, format='ICO')
                     print(f"Converted: {filename} -> {output_filename}")
-                    converted += 1
+                    converted.append(filename)
             except Exception as e:
                 print(f"Error converting {filename}: {e}")
 
@@ -83,12 +83,37 @@ def main():
     print("\nPlace your .icns files in the 'icons/icns' folder.")
     input("Press Enter when ready to continue...")
 
-    # Convert files
-    converted = convert_icns_to_ico(icns_dir, ico_dir)
-    print(f"\nConversion complete! Converted {converted} files.")
+    try:
+        # Convert files
+        converted_files = convert_icns_to_ico(icns_dir, ico_dir)
+        num_converted = len(converted_files)
+        print(f"\nConversion complete! Converted {num_converted} files.")
+
+        # Preserve originals by renaming directory
+        if num_converted > 0:
+            backup_base = 'dump-icns'
+            parent_dir = os.path.dirname(icns_dir)
+            counter = 0
+            while True:
+                suffix = f"-{counter}" if counter > 0 else ""
+                backup_path = os.path.join(parent_dir, f"{backup_base}{suffix}")
+                if not os.path.exists(backup_path):
+                    break
+                counter += 1
+            try:
+                os.rename(icns_dir, backup_path)
+                print(f"Renamed {icns_dir} to {backup_path}")
+                os.makedirs(icns_dir, exist_ok=True)
+                print(f"Created new {icns_dir}")
+            except Exception as e:
+                print(f"Failed to preserve originals: {e}. Originals remain in {icns_dir}.")
+
+    except KeyboardInterrupt:
+        print("\nConversion interrupted by user. Exiting gracefully.")
+        sys.exit(0)
 
     # Open the ico directory to show results
-    if converted > 0:
+    if num_converted > 0:
         try:
             subprocess.run(['explorer', os.path.abspath(ico_dir)], check=False)
         except Exception as e:
