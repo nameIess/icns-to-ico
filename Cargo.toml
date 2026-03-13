@@ -1,0 +1,32 @@
+[package]
+name = "icns-to-ico"
+version = "1.0.0"
+edition = "2021"
+description = "A fast CLI tool to batch convert Apple .icns icon files to Windows .ico format."
+license = "MIT"
+
+[[bin]]
+name = "icns-to-ico"
+path = "src/main.rs"
+
+[dependencies]
+image = "0.25"
+icns = "0.3"
+rayon = "1.10"
+ico = "0.3"
+dirs-next = "2"
+ratatui = "0.29"
+crossterm = "0.28"
+color-eyre = "0.6"
+
+[build-dependencies]
+embed-resource = "2"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+codegen-units = 1
+
+[package.metadata.dist]
+targets = ["x86_64-pc-windows-msvc"]

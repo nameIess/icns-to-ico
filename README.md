@@ -1,85 +1,105 @@
 # ICNS to ICO Converter
 
-A simple and user-friendly Python script to batch convert Apple ICNS icon files to Windows ICO format. Perfect for developers and designers working with cross-platform applications.
+A fast, native Windows TUI tool to batch convert Apple `.icns` icon files to Windows `.ico` format — written in Rust.
 
 ## Features
 
-- 🚀 **Batch Conversion**: Convert multiple ICNS files at once
-- 📁 **Auto Folder Management**: Automatically creates input/output directories
-- 🖥️ **GUI Integration**: Opens folders automatically for easy file management
-- 🏗️ **Standalone Executable**: Build a single exe file with no dependencies
-- ⚡ **Fast Processing**: Uses Pillow library for efficient image processing
+- 🖥️ **Interactive TUI** — beautiful terminal interface powered by [Ratatui](https://ratatui.rs/)
+- ⚡ **Parallel Processing** — converts multiple files concurrently with Rayon
+- 🎨 **Multi-Resolution ICO** — outputs proper ICO files with 16/32/48/64/128/256px sizes
+- 📁 **Auto Folder Management** — creates input/output directories in your Downloads folder automatically
+- 📦 **Tiny Executable** — native Rust binary, no runtime dependencies (~2–5 MB)
+- 🛡️ **No Antivirus Warnings** — natively compiled, no PyInstaller packaging
 
 ## Quick Start
 
-### Option 1: Run the Python Script
+### Option 1: Download
 
-```bash
-# Install dependencies
-pip install pillow
+Download the latest `icns-to-ico.exe` from [GitHub Releases](https://github.com/nameIess/icns-to-ico/releases).
 
-# Run the converter
-python convert.py
+Verify integrity:
+```powershell
+# Compare with checksums.txt from the release
+(Get-FileHash -Algorithm SHA256 icns-to-ico.exe).Hash
 ```
 
-### Option 2: Use the Standalone Executable
+### Option 2: Build from Source
 
-Download the latest release from [GitHub Releases](https://github.com/nameIess/icns-to-ico/releases)
+Prerequisites: [Rust 1.60+](https://rustup.rs/)
 
 ```bash
-# Simply run the exe
-icns-to-ico.exe
+git clone https://github.com/nameIess/icns-to-ico.git
+cd icns-to-ico
+cargo build --release
+# Executable: target\release\icns-to-ico.exe
 ```
 
 ## How It Works
 
-1. **Directories Created**: The tool automatically creates `icons/icns` and `icons/ico` folders in your Downloads directory
-2. **Input Folder Opens**: The `Downloads/icons/icns` folder opens for you to add .icns files
-3. **Press Enter** when ready
-4. **Conversion Runs**: All .icns files are converted to .ico format
-5. **Output Folder Opens**: The `Downloads/icons/ico` folder opens to show your converted files
+1. Run `icns-to-ico.exe` — the TUI launches
+2. The `Downloads/icons/icns` input folder opens automatically
+3. **Place your `.icns` files** there
+4. Press **Enter** in the TUI to start conversion
+5. Watch the live conversion log — `[OK]` for success, `[ERR]` for failures
+6. The `Downloads/icons/ico` output folder opens automatically when done
+7. Press **q** to quit
 
 ## Getting ICNS Icons
 
 Download high-quality macOS icons from:
+- [macOS Icons](https://macosicons.com/#/)
 
-- [macOS Icons](https://macosicons.com/#/) - Free collection of macOS system icons
+## 🛠 Tech Stack
 
-## Building from Source
+| | |
+|---|---|
+| Language | Rust 2021 |
+| TUI | [Ratatui](https://ratatui.rs/) + [Crossterm](https://github.com/crossterm-rs/crossterm) |
+| Image processing | [image](https://github.com/image-rs/image) + [icns](https://docs.rs/icns) |
+| Parallelism | [Rayon](https://github.com/rayon-rs/rayon) |
+| Resources | [embed-resource](https://github.com/nabijaczleweli/embed-resource) |
+| Releases | GitHub Actions |
 
-### Prerequisites
-
-- Python 3.6+
-- Pillow: `pip install pillow`
-- PyInstaller (for building exe): `pip install pyinstaller`
-
-### Build Commands
-
-```bash
-# Build executable only
-python convert.py --build
-
-# Or manually
-pyinstaller --onefile convert.py
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 icns-to-ico/
-├── convert.py          # Main conversion script
-├── README.md           # This file
-├── .gitignore         # Git ignore rules
-└── icons/             # Working directories (auto-created)
-    ├── icns/          # Input: Place .icns files here
-    └── ico/           # Output: Converted .ico files appear here
+├── src/
+│   ├── main.rs          # Entry point, terminal setup, event loop
+│   ├── app.rs           # Application state & screen logic
+│   ├── ui.rs            # Ratatui rendering
+│   ├── converter.rs     # ICNS→ICO conversion logic (parallel)
+│   └── filesystem.rs    # Directory management
+├── resources/
+│   ├── icon.ico         # Application icon
+│   ├── app.manifest     # Windows manifest (DPI + compatibility)
+│   └── app.rc           # Windows resource script (links icon + manifest)
+├── .github/
+│   └── workflows/
+│       └── release.yml  # CI/CD release pipeline
+├── build.rs             # Compiles app.rc → embeds icon into exe
+├── Cargo.toml
+└── README.md
 ```
 
-## Requirements
+## 🔐 Code Signing
 
-- **Python 3.6+** with Pillow library
-- **PyInstaller** (optional, for building exe)
-- **Windows** (for the executable version)
+To sign the release executable, add these repository secrets:
+- `SIGNING_CERT_BASE64` — Base64-encoded `.pfx` certificate
+- `SIGNING_CERT_PASSWORD` — Certificate password
+
+Then uncomment the signing steps in `.github/workflows/release.yml`.
+
+## Releasing
+
+Tag a commit with a version tag to trigger an automated release:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+GitHub Actions will build the exe, compute a SHA-256 checksum, and publish a GitHub Release automatically.
 
 ## Contributing
 
@@ -90,4 +110,4 @@ icns-to-ico/
 
 ## License
 
-[This project is open source. Feel free to use and modify.](LICENSE)
+[MIT License](LICENSE)
