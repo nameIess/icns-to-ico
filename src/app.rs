@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::process::Child;
 
 /// Which screen the app is currently on
 #[derive(Debug, Clone, PartialEq)]
@@ -28,6 +29,8 @@ pub struct App {
     pub failed: usize,
     /// Whether the user pressed 'q' / Esc to quit
     pub should_quit: bool,
+    /// Handles to explorer.exe windows spawned by this app
+    pub explorer_children: Vec<Child>,
 }
 
 impl App {
@@ -40,6 +43,7 @@ impl App {
             converted: 0,
             failed: 0,
             should_quit: false,
+            explorer_children: Vec::new(),
         }
     }
 

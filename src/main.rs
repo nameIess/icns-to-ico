@@ -19,8 +19,8 @@ fn main() -> Result<()> {
     // Create working directories
     let (icns_dir, ico_dir) = filesystem::create_directories()?;
 
-    // Open the input folder immediately for convenience
-    filesystem::open_folder(&icns_dir);
+    // Open the input folder immediately for convenience and track the handle
+    let initial_explorer = filesystem::open_folder(&icns_dir);
 
     // Set up terminal
     enable_raw_mode()?;
@@ -30,7 +30,15 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut app = App::new(icns_dir, ico_dir);
+    if let Some(child) = initial_explorer {
+        app.explorer_children.push(child);
+    }
     let result = run_app(&mut terminal, &mut app);
+
+    // Kill all explorer windows opened by this app
+    for child in &mut app.explorer_children {
+        let _ = child.kill();
+    }
 
     // Restore terminal
     disable_raw_mode()?;
@@ -68,9 +76,11 @@ fn run_app(
                             }
 
                             app.screen = Screen::Done;
-                            // Open output folder if anything succeeded
+                            // Open output folder if anything succeeded, track handle
                             if app.converted > 0 {
-                                filesystem::open_folder(&app.ico_dir);
+                                if let Some(child) = filesystem::open_folder(&app.ico_dir) {
+                                    app.explorer_children.push(child);
+                                }
                             }
                         }
                         KeyCode::Char('q') | KeyCode::Esc => {

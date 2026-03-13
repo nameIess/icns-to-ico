@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Child;
 
 /// Creates `icons/icns` and `icons/ico` inside the user's Downloads folder.
 /// Returns `(icns_dir, ico_dir)`.
@@ -18,8 +19,10 @@ pub fn create_directories() -> std::io::Result<(PathBuf, PathBuf)> {
 }
 
 /// Opens the given path in the OS native file explorer (Windows Explorer).
-pub fn open_folder(path: &Path) {
-    let _ = std::process::Command::new("explorer")
+/// Returns the spawned `Child` handle so the caller can kill it later.
+pub fn open_folder(path: &Path) -> Option<Child> {
+    std::process::Command::new("explorer")
         .arg(path)
-        .spawn();
+        .spawn()
+        .ok()
 }
